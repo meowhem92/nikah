@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gözde Naz & Shehab — Nikah Davetiyesi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-midnight: #070b19;
+            --bg-deep: #101730;
+            --bg-card: rgba(16, 23, 48, 0.85);
+            --silver-primary: #f1f5f9;
+            --silver-muted: #94a3b8;
+            --border-silver: rgba(241, 245, 249, 0.18);
+            --glow-color: rgba(241, 245, 249, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #141c38 0%, var(--bg-midnight) 100%);
+            color: var(--silver-primary);
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Soft magical starlight background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(rgba(255,255,255,0.8) 1px, transparent 0),
+                radial-gradient(rgba(241,245,249,0.4) 1.5px, transparent 0);
+            background-size: 120px 120px, 70px 70px;
+            background-position: 0 0, 35px 35px;
+            opacity: 0.25;
+            z-index: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            padding: 20px;
+        }
+
+        /* --- ENVELOPE SCREEN --- */
+        #envelope-screen {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            width: 330px;
+            height: 230px;
+            background: linear-gradient(145deg, #162143, #0d1326);
+            border: 1px solid var(--border-silver);
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(241, 245, 249, 0.05);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.4s ease;
+        }
+
+        .envelope-wrapper:hover {
+            transform: scale(1.03);
+        }
+
+        /* Envelope Flap */
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 165px solid transparent;
+            border-right: 165px solid transparent;
+            border-top: 125px solid #1c284f;
+            transform-origin: top;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.1s;
+            z-index: 3;
+            filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4));
+        }
+
+        .envelope-pocket {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            background: linear-gradient(180deg, rgba(22, 33, 67, 0.8) 0%, #0d1326 100%);
+            z-index: 2;
+        }
+
+        /* Lily Seal */
+        .lily-seal {
+            position: absolute;
+            top: 60px;
+            z-index: 4;
+            width: 54px;
+            height: 54px;
+            background: #0d1326;
+            border: 1.5px solid var(--silver-primary);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5), 0 0 10px rgba(241,245,249,0.2);
+            transition: transform 0.6s ease, opacity 0.4s ease;
+        }
+
+        .lily-seal svg {
+            width: 30px;
+            height: 30px;
+            stroke: var(--silver-primary);
+            fill: rgba(241, 245, 249, 0.15);
+            stroke-width: 1.5;
+        }
+
+        .tap-instruction {
+            margin-top: 30px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            letter-spacing: 3px;
+            color: var(--silver-muted);
+            text-align: center;
+            animation: pulseText 2s infinite ease-in-out;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        @keyframes pulseText {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .envelope-wrapper.open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        .envelope-wrapper.open .lily-seal {
+            opacity: 0;
+            transform: scale(0.4);
+        }
+
+        /* --- INVITATION CARD SCREEN --- */
+        #invitation-screen {
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
+            pointer-events: none;
+            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1) 0.5s, transform 1s cubic-bezier(0.16, 1, 0.3, 1) 0.5s;
+            width: 100%;
+            max-width: 400px;
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-silver);
+            border-radius: 16px;
+            padding: 45px 25px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.7), 0 0 40px rgba(241, 245, 249, 0.04);
+            text-align: center;
+            position: relative;
+        }
+
+        #invitation-screen.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        /* Elegant Corner Lilies */
+        .lily-corner {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            stroke: var(--silver-muted);
+            fill: rgba(241,245,249,0.03);
+            stroke-width: 1.2;
+            opacity: 0.6;
+        }
+        .lily-tl { top: 18px; left: 18px; transform: rotate(0deg); }
+        .lily-tr { top: 18px; right: 18px; transform: rotate(90deg); }
+        .lily-bl { bottom: 18px; left: 18px; transform: rotate(270deg); }
+        .lily-br { bottom: 18px; right: 18px; transform: rotate(180deg); }
+
+        .invitation-header {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.95rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--silver-muted);
+            margin-bottom: 15px;
+        }
+
+        .names {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.4rem;
+            font-weight: 500;
+            color: var(--silver-primary);
+            line-height: 1.2;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .names span {
+            display: block;
+            font-size: 1.3rem;
+            font-style: italic;
+            color: var(--silver-muted);
+            margin: 4px 0;
+            font-weight: 400;
+        }
+
+        .divider {
+            width: 50px;
+            height: 1px;
+            background: var(--border-silver);
+            margin: 20px auto;
+        }
+
+        .announcement-text {
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: var(--silver-muted);
+            margin-bottom: 25px;
+            font-weight: 300;
+        }
+
+        .event-details {
+            background: rgba(7, 11, 25, 0.45);
+            border: 1px solid rgba(241, 245, 249, 0.08);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .detail-row {
+            margin-bottom: 15px;
+        }
+
+        .detail-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-label {
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--silver-muted);
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.35rem;
+            color: var(--silver-primary);
+        }
+
+        .venue-link {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: var(--silver-primary);
+            text-decoration: none;
+            border-bottom: 1px solid var(--silver-muted);
+            padding-bottom: 2px;
+            transition: color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .venue-link:hover {
+            color: #ffffff;
+            border-color: #ffffff;
+        }
+
+        /* Countdown */
+        .countdown-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .countdown-box {
+            text-align: center;
+        }
+
+        .countdown-number {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: var(--silver-primary);
+            display: block;
+        }
+
+        .countdown-label {
+            font-size: 0.65rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--silver-muted);
+        }
+
+        /* Heart Explosion Particles */
+        .heart-particle {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 100;
+            animation: explodeHeart 1.8s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+        }
+
+        .heart-particle svg {
+            fill: #f1f5f9;
+            filter: drop-shadow(0 0 8px rgba(241, 245, 249, 0.8));
+        }
+
+        @keyframes explodeHeart {
+            0% {
+                transform: translate(0, 0) scale(0.3) rotate(0deg);
+                opacity: 1;
+            }
+            60% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(1.3) rotate(var(--trot));
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Envelope Screen -->
+        <div id="envelope-screen" onclick="openEnvelope()">
+            <div class="envelope-wrapper" id="envelope">
+                <div class="envelope-flap"></div>
+                <div class="envelope-pocket"></div>
+                <div class="lily-seal">
+                    <!-- Proper 3-Petal Lily Illustration -->
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C10 7 7 10 3 13C7 15 10 17 12 22C14 17 17 15 21 13C17 10 14 7 12 2Z" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 22V10" stroke-linecap="round"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="tap-instruction">Açmak için dokununuz</div>
+        </div>
+
+        <!-- Invitation Main Card -->
+        <div id="invitation-screen">
+            <!-- Graceful Lily Corners -->
+            <svg class="lily-corner lily-tl" viewBox="0 0 24 24"><path d="M12 2C10 7 7 10 3 13C7 15 10 17 12 22" stroke-linecap="round"/><path d="M12 6C10 9 8 11 5 13" stroke-linecap="round"/></svg>
+            <svg class="lily-corner lily-tr" viewBox="0 0 24 24"><path d="M12 2C10 7 7 10 3 13C7 15 10 17 12 22" stroke-linecap="round"/><path d="M12 6C10 9 8 11 5 13" stroke-linecap="round"/></svg>
+            <svg class="lily-corner lily-bl" viewBox="0 0 24 24"><path d="M12 2C10 7 7 10 3 13C7 15 10 17 12 22" stroke-linecap="round"/><path d="M12 6C10 9 8 11 5 13" stroke-linecap="round"/></svg>
+            <svg class="lily-corner lily-br" viewBox="0 0 24 24"><path d="M12 2C10 7 7 10 3 13C7 15 10 17 12 22" stroke-linecap="round"/><path d="M12 6C10 9 8 11 5 13" stroke-linecap="round"/></svg>
+
+            <div class="invitation-header">Nikah Davetiyesi</div>
+            
+            <h1 class="names">
+                Gözde Naz
+                <span>&</span>
+                Shehab
+            </h1>
+
+            <div class="divider"></div>
+
+            <p class="announcement-text">
+                Mutluluğumuzu sizinle paylaşmaktan büyük heyecan ve mutluluk duyuyoruz. Bu özel günümüzde yanımızda olmanızı veya iyi dileklerinizle bize eşlik etmenizi çok isteriz.
+            </p>
+
+            <div class="event-details">
+                <div class="detail-row">
+                    <div class="detail-label">Tarih</div>
+                    <div class="detail-value">15 Ekim 2026</div>
+                </div>
+                <div class="detail-row" style="margin-top: 12px;">
+                    <div class="detail-label">Saat</div>
+                    <div class="detail-value">14:00</div>
+                </div>
+                <div class="detail-row" style="margin-top: 12px;">
+                    <div class="detail-label">Yer</div>
+                    <div class="detail-value" style="font-size: 1.1rem; line-height: 1.4;">Prof. Dr. Türkan Saylan Nikah Salonu</div>
+                    <a href="https://maps.google.com/?q=Prof.+Dr.+Türkan+Saylan+Nikah+Salonu+Çankaya" target="_blank" class="venue-link">Çankaya, Ankara → Haritada Gör</a>
+                </div>
+            </div>
+
+            <div class="countdown-container">
+                <div class="countdown-box">
+                    <span class="countdown-number" id="days">00</span>
+                    <span class="countdown-label">Gün</span>
+                </div>
+                <div class="countdown-box">
+                    <span class="countdown-number" id="hours">00</span>
+                    <span class="countdown-label">Saat</span>
+                </div>
+                <div class="countdown-box">
+                    <span class="countdown-number" id="minutes">00</span>
+                    <span class="countdown-label">Dakika</span>
+                </div>
+                <div class="countdown-box">
+                    <span class="countdown-number" id="seconds">00</span>
+                    <span class="countdown-label">Saniye</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openEnvelope() {
+            const envelope = document.getElementById('envelope');
+            const envelopeScreen = document.getElementById('envelope-screen');
+            const invitationScreen = document.getElementById('invitation-screen');
+
+            // Open the envelope flap
+            envelope.classList.add('open');
+
+            // Trigger explosive heart burst
+            createHeartExplosion();
+
+            // Transition screens
+            setTimeout(() => {
+                envelopeScreen.style.opacity = '0';
+                envelopeScreen.style.pointerEvents = 'none';
+                invitationScreen.classList.add('show');
+            }, 600);
+        }
+
+        function createHeartExplosion() {
+            const container = document.body;
+            const particleCount = 28; // Rich explosion feel
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('heart-particle');
+                
+                // Random angle and distance for explosion spread
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 80 + Math.random() * 180;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance - 50; // slight upward bias
+                const trot = (Math.random() - 0.5) * 90;
+
+                particle.style.setProperty('--tx', `${tx}px`);
+                particle.style.setProperty('--ty', `${ty}px`);
+                particle.style.setProperty('--trot', `${trot}deg`);
+
+                // Start position right at the envelope center
+                particle.style.left = `calc(50% + ${(Math.random() - 0.5) * 40}px)`;
+                particle.style.top = `calc(50% + ${(Math.random() - 0.5) * 20}px)`;
+
+                // Random heart sizes
+                const size = 14 + Math.random() * 16;
+                particle.innerHTML = `
+                    <svg width="${size}" height="${size}" viewBox="0 0 24 24">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                `;
+
+                const duration = 1.0 + Math.random() * 0.8;
+                particle.style.animationDuration = `${duration}s`;
+
+                container.appendChild(particle);
+
+                setTimeout(() => {
+                    particle.remove();
+                }, duration * 1000);
+            }
+        }
+
+        // Countdown Timer Logic (Target: 15 October 2026, 14:00)
+        function updateCountdown() {
+            const nikahDate = new Date('October 15, 2026 14:00:00').getTime();
+            const now = new Date().getTime();
+            const distance = nikahDate - now;
+
+            if (distance < 0) {
+                document.getElementById('days').innerText = '00';
+                document.getElementById('hours').innerText = '00';
+                document.getElementById('minutes').innerText = '00';
+                document.getElementById('seconds').innerText = '00';
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('days').innerText = String(days).padStart(2, '0');
+            document.getElementById('hours').innerText = String(hours).padStart(2, '0');
+            document.getElementById('minutes').innerText = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').innerText = String(seconds).padStart(2, '0');
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+</body>
+</html>
