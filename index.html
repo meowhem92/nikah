@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gözde Naz & Shehab — Nikah Invitation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-midnight: #0b1021;
+            --bg-deep: #131b36;
+            --silver-primary: #e2e8f0;
+            --silver-muted: #94a3b8;
+            --accent-glow: rgba(226, 232, 240, 0.15);
+            --border-silver: rgba(226, 232, 240, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-midnight);
+            color: var(--silver-primary);
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Subtle starlight background effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(white 1px, transparent 0),
+                radial-gradient(rgba(226, 232, 240, 0.6) 1px, transparent 0);
+            background-size: 50px 50px, 80px 80px;
+            background-position: 0 0, 25px 35px;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            padding: 20px;
+        }
+
+        /* --- ENVELOPE SCREEN --- */
+        #envelope-screen {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            width: 320px;
+            height: 220px;
+            background: var(--bg-deep);
+            border: 1px solid var(--border-silver);
+            border-radius: 8px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(226, 232, 240, 0.05);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.4s ease;
+        }
+
+        .envelope-wrapper:hover {
+            transform: scale(1.02);
+        }
+
+        /* Envelope Flap */
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-top: 115px solid #1a254a;
+            transform-origin: top;
+            transition: transform 0.8s ease 0.2s;
+            z-index: 3;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+        }
+
+        .envelope-pocket {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            background: linear-gradient(135deg, #131b36 0%, #0d1328 100%);
+            z-index: 2;
+        }
+
+        /* Lily Stamp / Seal */
+        .lily-seal {
+            position: absolute;
+            top: 55px;
+            z-index: 4;
+            width: 50px;
+            height: 50px;
+            background: var(--bg-midnight);
+            border: 1.5s solid var(--silver-primary);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            transition: transform 0.6s ease;
+        }
+
+        .lily-seal svg {
+            width: 28px;
+            height: 28px;
+            stroke: var(--silver-primary);
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        .tap-instruction {
+            margin-top: 25px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.25rem;
+            letter-spacing: 2px;
+            color: var(--silver-muted);
+            text-align: center;
+            animation: pulseText 2s infinite ease-in-out;
+        }
+
+        @keyframes pulseText {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* Opening States */
+        .envelope-wrapper.open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        .envelope-wrapper.open .lily-seal {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+
+        /* --- INVITATION CARD SCREEN --- */
+        #invitation-screen {
+            opacity: 0;
+            transform: translateY(30px);
+            pointer-events: none;
+            transition: opacity 1s ease 0.6s, transform 1s ease 0.6s;
+            width: 100%;
+            max-width: 420px;
+            background: rgba(19, 27, 54, 0.75);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-silver);
+            border-radius: 12px;
+            padding: 40px 25px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 30px rgba(226, 232, 240, 0.03);
+            text-align: center;
+            position: relative;
+        }
+
+        #invitation-screen.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* Lily Corner Accents */
+        .lily-corner {
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            stroke: var(--silver-muted);
+            fill: none;
+            stroke-width: 1.2;
+            opacity: 0.5;
+        }
+        .lily-tl { top: 15px; left: 15px; transform: rotate(0deg); }
+        .lily-tr { top: 15px; right: 15px; transform: rotate(90deg); }
+        .lily-bl { bottom: 15px; left: 15px; transform: rotate(270deg); }
+        .lily-br { bottom: 15px; right: 15px; transform: rotate(180deg); }
+
+        .invitation-header {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--silver-muted);
+            margin-bottom: 15px;
+        }
+
+        .names {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.3rem;
+            font-weight: 500;
+            color: var(--silver-primary);
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .names span {
+            display: block;
+            font-size: 1.4rem;
+            font-style: italic;
+            color: var(--silver-muted);
+            margin: 5px 0;
+        }
+
+        .divider {
+            width: 60px;
+            height: 1px;
+            background: var(--border-silver);
+            margin: 20px auto;
+        }
+
+        .announcement-text {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--silver-muted);
+            margin-bottom: 25px;
+            font-weight: 300;
+        }
+
+        .event-details {
+            background: rgba(11, 16, 33, 0.5);
+            border: 1px solid rgba(226, 232, 240, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .detail-row {
+            margin-bottom: 12px;
+        }
+
+        .detail-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--silver-muted);
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            color: var(--silver-primary);
+        }
+
+        .venue-link {
+            display: inline-block;
+            margin-top: 6px;
+            font-size: 0.85rem;
+            color: var(--silver-primary);
+            text-decoration: none;
+            border-bottom: 1px solid var(--silver-muted);
+            padding-bottom: 1px;
+            transition: color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .venue-link:hover {
+            color: #ffffff;
+            border-color: #ffffff;
+        }
+
+        /* Countdown */
+        .countdown-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .countdown-box {
+            text-align: center;
+        }
+
+        .countdown-number {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: var(--silver-primary);
+            display: block;
+        }
+
+        .countdown-label {
+            font-size: 0.65rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--silver-muted);
+        }
+
+        /* Floating Hearts Animation */
+        .heart {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 10;
+            animation: floatUp 2s ease-out forwards;
+        }
+
+        .heart svg {
+            fill: var(--silver-primary);
+            filter: drop-shadow(0 0 6px rgba(226, 232, 240, 0.6));
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(0.6) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-250px) scale(1.2) rotate(20deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Envelope Screen -->
+        <div id="envelope-screen" onclick="openEnvelope()">
+            <div class="envelope-wrapper" id="envelope">
+                <div class="envelope-flap"></div>
+                <div class="envelope-pocket"></div>
+                <div class="lily-seal">
+                    <!-- Minimalist Lily Icon -->
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2v20M12 2C9 6 5 8 3 12c3 0 7-2 9-10zM12 2c3 4 7 6 9 10-3 0-7-2-9-10z" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="tap-instruction">Tap to Open</div>
+        </div>
+
+        <!-- Invitation Main Card -->
+        <div id="invitation-screen">
+            <!-- Corner Lilies -->
+            <svg class="lily-corner lily-tl" viewBox="0 0 24 24"><path d="M12 2v20M12 2C9 6 5 8 3 12c3 0 7-2 9-10z" stroke-linecap="round"/></svg>
+            <svg class="lily-corner lily-tr" viewBox="0 0 24 24"><path d="M12 2v20M12 2C9 6 5 8 3 12c3 0 7-2 9-10z" stroke-linecap="round"/></svg>
+            <svg class="lily-corner lily-bl" viewBox="0 0 24 24"><path d="M12 2v20M12 2C9 6 5 8 3 12c3 0 7-2 9-10z" stroke-linecap="round"/></svg>
+            <svg class="lily-corner lily-br" viewBox="0 0 24 24"><path d="M12 2v20M12 2C9 6 5 8 3 12c3 0 7-2 9-10z" stroke-linecap="round"/></svg>
+
+            <div class="invitation-header">Nikah Announcement</div>
+            
+            <h1 class="names">
+                Gözde Naz
+                <span>&</span>
+                Shehab
+            </h1>
+
+            <div class="divider"></div>
+
+            <p class="announcement-text">
+                With great joy in our hearts, we are delighted to share the happy news of our Nikah. We warmly invite you to celebrate this special milestone with us in spirit and good wishes.
+            </p>
+
+            <div class="event-details">
+                <div class="detail-row">
+                    <div class="detail-label">Date</div>
+                    <div class="detail-value">October 15, 2026</div>
+                </div>
+                <div class="detail-row" style="margin-top: 15px;">
+                    <div class="detail-label">Time</div>
+                    <div class="detail-value">14:00</div>
+                </div>
+                <div class="detail-row" style="margin-top: 15px;">
+                    <div class="detail-label">Location</div>
+                    <div class="detail-value" style="font-size: 1.1rem; line-height: 1.4;">Prof. Dr. Türkan Saylan Nikah Salonu</div>
+                    <a href="https://maps.google.com/?q=Prof.+Dr.+Türkan+Saylan+Nikah+Salonu+Çankaya" target="_blank" class="venue-link">Çankaya, Ankara → View on Map</a>
+                </div>
+            </div>
+
+            <div class="countdown-container">
+                <div class="countdown-box">
+                    <span class="countdown-number" id="days">00</span>
+                    <span class="countdown-label">Days</span>
+                </div>
+                <div class="countdown-box">
+                    <span class="countdown-number" id="hours">00</span>
+                    <span class="countdown-label">Hours</span>
+                </div>
+                <div class="countdown-box">
+                    <span class="countdown-number" id="minutes">00</span>
+                    <span class="countdown-label">Mins</span>
+                </div>
+                <div class="countdown-box">
+                    <span class="countdown-number" id="seconds">00</span>
+                    <span class="countdown-label">Secs</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openEnvelope() {
+            const envelope = document.getElementById('envelope');
+            const envelopeScreen = document.getElementById('envelope-screen');
+            const invitationScreen = document.getElementById('invitation-screen');
+
+            // Open the flap
+            envelope.classList.add('open');
+
+            // Generate floating starlight hearts
+            createFloatingHearts();
+
+            // Fade out envelope and show invitation after animation
+            setTimeout(() => {
+                envelopeScreen.style.opacity = '0';
+                envelopeScreen.style.pointerEvents = 'none';
+                invitationScreen.classList.add('show');
+            }, 700);
+        }
+
+        function createFloatingHearts() {
+            const container = document.body;
+            const heartCount = 12;
+
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                
+                // Random positioning around center
+                const randomX = (Math.random() - 0.5) * 200;
+                heart.style.left = `calc(50% + ${randomX}px)`;
+                heart.style.bottom = '40vh';
+
+                // Starlight heart SVG
+                heart.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                `;
+
+                // Random animation duration & delay
+                const duration = 1.5 + Math.random() * 1;
+                const delay = Math.random() * 0.4;
+                heart.style.animationDuration = `${duration}s`;
+                heart.style.animationDelay = `${delay}s`;
+
+                container.appendChild(heart);
+
+                // Clean up after animation
+                setTimeout(() => {
+                    heart.remove();
+                }, (duration + delay) * 1000);
+            }
+        }
+
+        // Countdown Timer Logic
+        function updateCountdown() {
+            const nikahDate = new Date('October 15, 2026 14:00:00').getTime();
+            const now = new Date().getTime();
+            const distance = nikahDate - now;
+
+            if (distance < 0) {
+                document.getElementById('days').innerText = '00';
+                document.getElementById('hours').innerText = '00';
+                document.getElementById('minutes').innerText = '00';
+                document.getElementById('seconds').innerText = '00';
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('days').innerText = String(days).padStart(2, '0');
+            document.getElementById('hours').innerText = String(hours).padStart(2, '0');
+            document.getElementById('minutes').innerText = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').innerText = String(seconds).padStart(2, '0');
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+</body>
+</html>
